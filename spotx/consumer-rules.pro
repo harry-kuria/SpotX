@@ -1,0 +1,1 @@
+# Add proguard rules for consumers if needed 

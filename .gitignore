@@ -1,0 +1,45 @@
+# Gradle
+.gradle/
+build/
+**/build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/**/build/
+
+# Android Studio
+.idea/
+*.iml
+*.ipr
+*.iws
+/.project
+/.classpath
+/.settings/
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Kotlin
+**/out/
+
+# Logs
+*.log
+
+# Keystores
+*.jks
+*.keystore
+*.pem
+
+# Generated
+coverage/
+reports/
+
+# Docs build
+site/
+.mktmp/
+
+# Node
+node_modules/ 
