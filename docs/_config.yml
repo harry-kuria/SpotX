@@ -1,0 +1,9 @@
+title: SpotX
+description: Jetpack Compose onboarding tours SDK
+# Use a supported GitHub Pages theme
+theme: jekyll-theme-cayman
+markdown: kramdown
+exclude:
+  - vendor
+  - Gemfile
+  - Gemfile.lock 

@@ -18,22 +18,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 17
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-      - name: Accept licenses and install build tools
+      - name: Build API docs (optional)
         run: |
-          yes | sdkmanager --licenses
-          sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
-      - name: Build API docs
-        run: |
-          ./gradlew :spotx:dokkaHtml --no-daemon
+          ./gradlew :spotx:dokkaHtml --no-daemon || true
           mkdir -p docs/api
-          rsync -a spotx/build/dokka/html/ docs/api/ || true
+          if [ -d spotx/build/dokka/html ]; then rsync -a spotx/build/dokka/html/ docs/api/; fi
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
