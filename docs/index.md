@@ -5,52 +5,30 @@ title: SpotX
 
 # SpotX
 
-Jetpack Compose onboarding tours SDK inspired by TapTargetView. Draw spotlight overlays with customizable highlight circles, rings, and descriptions.
+SpotX is a Jetpack Compose onboarding tours SDK inspired by TapTargetView. It provides spotlight overlays that guide users through your UI.
 
-- SDK: `spotx`
-- Sample: `sample`
-- API Reference: see API docs built with Dokka under `api/`
+- SDK: `spotx` library module
+- Sample app: `sample` module
 
 ## Installation
 
-After publishing to Maven Central:
+Add the dependency after publishing to Maven Central:
 
 ```kotlin
-dependencies {
-    implementation("io.github.harrykuria:spotx:0.1.0")
-}
+implementation("io.github.harry-kuria:spotx:0.1.0")
 ```
 
-## Quick start
+## Features
 
-```kotlin
-val controller = remember { SpotXController() }
+- Highlight UI elements with customizable shapes
+- Material 3 styling
+- Simple, composable API
 
-Button(
-    modifier = Modifier.spotxAnchor("btn.primary", controller),
-    onClick = { }
-) { Text("Primary Action") }
+## Status
 
-LaunchedEffect(Unit) {
-    controller.start(
-        listOf(
-            SpotXTarget(
-                id = "btn.primary",
-                title = "Primary Button",
-                description = "Tap to perform the main action.",
-                ringColor = Color(0xFF22C55E)
-            )
-        )
-    )
-}
+Early preview. APIs may change.
 
-SpotXOverlay(controller = controller)
-```
+## Links
 
-## Customization
-
-- Circle or rounded rectangle shape
-- Custom ring color/width and overlay dim color
-- Padding around target radius
-
-See more in [usage](./usage.md). 
+- GitHub: https://github.com/harry-kuria/SpotX
+- API Reference: /api/ 

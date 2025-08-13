@@ -7,7 +7,7 @@ plugins {
 }
 
 allprojects {
-    group = "io.github.harrykuria"
+    group = "io.github.harry-kuria"
     version = "0.1.0"
 }
 

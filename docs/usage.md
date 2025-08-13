@@ -1,15 +1,40 @@
+---
+layout: default
+title: Usage
+---
+
 # Usage
 
-## Anchors
-Mark any composable as an anchor to be spotlighted:
+Add dependency:
+
+```kotlin
+implementation("io.github.harry-kuria:spotx:0.1.0")
+```
+
+Basic example:
 
 ```kotlin
 val controller = remember { SpotXController() }
 
 Button(
     modifier = Modifier.spotxAnchor("btn.primary", controller),
-    onClick = {}
+    onClick = { }
 ) { Text("Primary Action") }
+
+LaunchedEffect(Unit) {
+    controller.start(
+        listOf(
+            SpotXTarget(
+                id = "btn.primary",
+                title = "Primary Button",
+                description = "Tap to perform the main action.",
+                ringColor = Color(0xFF22C55E)
+            )
+        )
+    )
+}
+
+SpotXOverlay(controller = controller)
 ```
 
 ## Targets and overlay
