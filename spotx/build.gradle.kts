@@ -39,7 +39,7 @@ android {
 }
 
 dependencies {
-	implementation(platform("androidx.compose:compose-bom:${project.findProperty("compose.bom.version") ?: "2024.10.00"}"))
+	implementation(platform("androidx.compose:compose-bom:${project.findProperty("compose.bom.version") ?: "2024.09.02"}"))
 	implementation("androidx.compose.ui:ui")
 	implementation("androidx.compose.ui:ui-graphics")
 	implementation("androidx.compose.ui:ui-tooling-preview")
