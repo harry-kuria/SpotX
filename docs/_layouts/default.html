@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>{{ page.title }} • SpotX</title>
+	{% include head.html %}
+</head>
+<body>
+	<header class="site-header">
+		<div class="container">
+			<a class="brand" href="/SpotX/">SpotX</a>
+			<nav class="nav">
+				<a href="/SpotX/">Home</a>
+				<a href="/SpotX/usage.html">Usage</a>
+				<a href="/SpotX/api/">API</a>
+				<a href="/SpotX/contact.html">Contact</a>
+			</nav>
+		</div>
+	</header>
+	<main class="container content">
+		{{ content }}
+	</main>
+	<footer class="site-footer">
+		<div class="container">
+			<p>© {{ site.time | date: '%Y' }} SpotX. Apache-2.0.</p>
+		</div>
+	</footer>
+</body>
+</html> 

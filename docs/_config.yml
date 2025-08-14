@@ -6,4 +6,20 @@ markdown: kramdown
 exclude:
   - vendor
   - Gemfile
-  - Gemfile.lock 
+  - Gemfile.lock
+
+# Customization
+includes_dir: _includes
+sass:
+  style: compressed
+
+# Navbar links
+nav:
+  - title: Home
+    url: /
+  - title: Usage
+    url: /usage.html
+  - title: API
+    url: /api/
+  - title: Contact
+    url: /contact.html 
