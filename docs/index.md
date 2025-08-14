@@ -15,7 +15,7 @@ SpotX is a Jetpack Compose onboarding tours SDK inspired by TapTargetView. It pr
 Add the dependency after publishing to Maven Central:
 
 ```kotlin
-implementation("io.github.harry-kuria:spotx:0.1.0")
+implementation("io.github.harry-kuria:spotx:1.0.6")
 ```
 
 ## Features
@@ -31,4 +31,4 @@ Early preview. APIs may change.
 ## Links
 
 - GitHub: https://github.com/harry-kuria/SpotX
-- API Reference: /api/ 
+- API Reference: ./api/ 
