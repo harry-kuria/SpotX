@@ -81,8 +81,12 @@ afterEvaluate {
 			}
 		}
 	}
-} 
+}
 
 signing {
-	useGpgCmd()
+	val signingKey: String? = findProperty("signingInMemoryKey") as String?
+	val signingPassword: String? = findProperty("signingInMemoryKeyPassword") as String?
+	if (signingKey != null && signingPassword != null) {
+		useInMemoryPgpKeys(signingKey, signingPassword)
+	}
 }
