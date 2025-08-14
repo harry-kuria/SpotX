@@ -1,9 +1,10 @@
+// SonatypeHost is available when the plugin classpath is resolved; use fully-qualified name in configuration block
+
 plugins {
 	id("com.android.library")
 	id("org.jetbrains.kotlin.android")
 	id("org.jetbrains.dokka")
-	id("maven-publish")
-	id("signing")
+	id("com.vanniktech.maven.publish")
 }
 
 android {
@@ -30,12 +31,7 @@ android {
 		jvmTarget = "17"
 	}
 
-	publishing {
-		singleVariant("release") {
-			withSourcesJar()
-			withJavadocJar()
-		}
-	}
+	// Vanniktech plugin will configure publishing for Android artifacts
 }
 
 dependencies {
@@ -56,59 +52,32 @@ tasks.register<org.jetbrains.dokka.gradle.DokkaTask>("dokkaHtmlSite") {
 
 // Publishing configuration
 afterEvaluate {
-	publishing {
-		publications {
-			create<MavenPublication>("mavenRelease") {
-				from(components["release"])
-				groupId = project.group.toString()
-				artifactId = "spotx"
-				version = project.version.toString()
-				pom {
-					name.set("SpotX")
-					description.set("Jetpack Compose onboarding tours SDK with spotlight overlays.")
-					url.set("https://github.com/harry-kuria/SpotX")
-					scm {
-						url.set("https://github.com/harry-kuria/SpotX")
-						connection.set("scm:git:https://github.com/harry-kuria/SpotX.git")
-						developerConnection.set("scm:git:ssh://git@github.com/harry-kuria/SpotX.git")
-					}
-					licenses {
-						license {
-							name.set("Apache-2.0")
-							url.set("https://www.apache.org/licenses/LICENSE-2.0")
-						}
-					}
-					developers {
-						developer {
-							id.set("harry-kuria")
-							name.set("Harry Kuria")
-						}
-					}
+	// Configure Central Portal publishing via Vanniktech plugin
+	mavenPublishing {
+		publishToMavenCentral()
+		signAllPublications()
+		// Keep explicit POM metadata
+		pom {
+			name.set("SpotX")
+			description.set("Jetpack Compose onboarding tours SDK with spotlight overlays.")
+			url.set("https://github.com/harry-kuria/SpotX")
+			scm {
+				url.set("https://github.com/harry-kuria/SpotX")
+				connection.set("scm:git:https://github.com/harry-kuria/SpotX.git")
+				developerConnection.set("scm:git:ssh://git@github.com/harry-kuria/SpotX.git")
+			}
+			licenses {
+				license {
+					name.set("Apache-2.0")
+					url.set("https://www.apache.org/licenses/LICENSE-2.0")
 				}
 			}
-		}
-		repositories {
-			maven {
-				name = "OSSRH"
-				url = uri(if ((version as String).endsWith("SNAPSHOT"))
-					"https://s01.oss.sonatype.org/content/repositories/snapshots/"
-				else
-					"https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-				credentials {
-					username = findProperty("mavenCentralUsername") as String? ?: System.getenv("OSSRH_USERNAME")
-					password = findProperty("mavenCentralPassword") as String? ?: System.getenv("OSSRH_PASSWORD")
+			developers {
+				developer {
+					id.set("harry-kuria")
+					name.set("Harry Kuria")
 				}
 			}
-		}
-	}
-
-	// Signing only if keys are available
-	signing {
-		val signingKey: String? = findProperty("signingInMemoryKey") as String?
-		val signingPassword: String? = findProperty("signingInMemoryKeyPassword") as String?
-		if (signingKey != null && signingPassword != null) {
-			useInMemoryPgpKeys(signingKey, signingPassword)
-			sign(publishing.publications["mavenRelease"])
 		}
 	}
 } 
