@@ -58,15 +58,23 @@ jobs:
           SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
         run: |
+          set -euo pipefail
           sudo apt-get update -y
           sudo apt-get install -y gnupg
-          echo "$SIGNING_KEY" | gpg --batch --import
+          # Import private key (with proper newlines)
+          printf '%s' "$SIGNING_KEY" | gpg --batch --import
+          # Normalize to ascii-armored private key material for Gradle
+          KEYID=$(gpg --list-secret-keys --with-colons | awk -F: '/^sec:/ {print $5; exit}')
+          echo "Using GPG key: $KEYID"
+          gpg --keyserver keyserver.ubuntu.com --send-keys "$KEYID" || true
+          gpg --keyserver hkps://keys.openpgp.org --send-keys "$KEYID" || true
+          # Export normalized ascii armored private key for Gradle
+          gpg --batch --pinentry-mode loopback --passphrase "$SIGNING_PASSWORD" --export-secret-keys --armor "$KEYID" > normalized.asc
           ./gradlew :spotx:publishToMavenLocal \
             -PVERSION_NAME='${{ steps.ver.outputs.version }}' \
-            -PsigningInMemoryKey='${{ secrets.SIGNING_KEY }}' \
+            -PsigningInMemoryKey="$(cat normalized.asc)" \
             -PsigningInMemoryKeyPassword='${{ secrets.SIGNING_PASSWORD }}' \
             --no-daemon --stacktrace
-          set -euo pipefail
           for asc in $(find "$HOME/.m2/repository" -path "*/io/github/harry-kuria/spotx/*" -name "*.asc"); do
             base="${asc%.asc}"
             echo "Verifying $asc against $base"
@@ -80,6 +88,6 @@ jobs:
             -PVERSION_NAME="$VERSION" \
             -PmavenCentralUsername='${{ secrets.OSSRH_USERNAME }}' \
             -PmavenCentralPassword='${{ secrets.OSSRH_PASSWORD }}' \
-            -PsigningInMemoryKey='${{ secrets.SIGNING_KEY }}' \
+            -PsigningInMemoryKey="$(cat normalized.asc)" \
             -PsigningInMemoryKeyPassword='${{ secrets.SIGNING_PASSWORD }}' \
             --no-daemon --stacktrace
