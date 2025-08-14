@@ -8,12 +8,16 @@ exclude:
   - Gemfile
   - Gemfile.lock
 
+# GitHub Pages project site base URL
+url: https://harry-kuria.github.io
+baseurl: /SpotX
+
 # Customization
 includes_dir: _includes
 sass:
   style: compressed
 
-# Navbar links
+# Navbar links (used by custom layout)
 nav:
   - title: Home
     url: /
