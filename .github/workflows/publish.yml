@@ -44,6 +44,24 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: wrapper
+      - name: Preflight sign and verify
+        env:
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y gnupg
+          echo "$SIGNING_KEY" | gpg --batch --import
+          ./gradlew :spotx:publishMavenReleasePublicationToMavenLocal \
+            -PsigningInMemoryKey='${{ secrets.SIGNING_KEY }}' \
+            -PsigningInMemoryKeyPassword='${{ secrets.SIGNING_PASSWORD }}' \
+            --no-daemon --stacktrace
+          set -euo pipefail
+          for asc in $(find "$HOME/.m2/repository" -path "*/io/github/harry-kuria/spotx/*" -name "*.asc"); do
+            base="${asc%.asc}"
+            echo "Verifying $asc against $base"
+            gpg --batch --verify "$asc" "$base"
+          done
       - name: Publish (upload + release via Central Portal)
         run: |
           ./gradlew :spotx:publishAndReleaseToMavenCentral \
