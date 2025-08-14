@@ -5,14 +5,14 @@ title: SpotX
 
 # SpotX
 
-SpotX is a Jetpack Compose onboarding tours SDK inspired by TapTargetView. It provides spotlight overlays that guide users through your UI.
+SpotX is a modern onboarding tours SDK for Jetpack Compose. Spotlight any composable with elegant, Material 3‑styled overlays—built the "Compose way": declarative, fast, and a joy to use.
+
+> Kotlin-first. Compose-native. Minimal API, maximum clarity.
 
 - SDK: `spotx` library module
 - Sample app: `sample` module
 
 ## Installation
-
-Add the dependency after publishing to Maven Central:
 
 ```kotlin
 implementation("io.github.harry-kuria:spotx:1.0.6")
@@ -45,8 +45,9 @@ SpotXOverlay(controller = controller)
 ```
 
 <p>
-  <a class="btn" href="./usage.html">Read the full Usage guide</a>
-  <a class="btn" href="./api/" style="margin-left:8px">API Reference</a>
+  <a class="btn" href="./overview.html">Why SpotX</a>
+  <a class="btn" href="./usage.html" style="margin-left:8px">Usage</a>
+  <a class="btn" href="./api/" style="margin-left:8px">API</a>
 </p>
 
 ## Features
@@ -55,9 +56,11 @@ SpotXOverlay(controller = controller)
 - Material 3 styling
 - Simple, composable API
 
-## Status
+## Facts about Kotlin and Compose
 
-Early preview. APIs may change.
+- Kotlin’s null‑safety, coroutines, and data classes yield robust, concise code.
+- Jetpack Compose updates only what changes (selective recomposition) and is GPU‑accelerated.
+- The Compose compiler performs stability inference and slot table optimizations for performance.
 
 ## Links
 

@@ -21,6 +21,14 @@ sass:
 nav:
   - title: Home
     url: /
+  - title: Overview
+    url: /overview.html
+  - title: Architecture
+    url: /architecture.html
+  - title: Performance
+    url: /performance.html
+  - title: Theming
+    url: /theming.html
   - title: Usage
     url: /usage.html
   - title: API
