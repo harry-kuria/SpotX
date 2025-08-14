@@ -5,6 +5,7 @@ plugins {
 	id("org.jetbrains.kotlin.android")
 	id("org.jetbrains.dokka")
 	id("com.vanniktech.maven.publish")
+	id("signing")
 }
 
 android {
@@ -81,3 +82,7 @@ afterEvaluate {
 		}
 	}
 } 
+
+signing {
+	useGpgCmd()
+}
