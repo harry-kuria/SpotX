@@ -23,10 +23,17 @@ jobs:
           ./gradlew :spotx:dokkaHtml --no-daemon || true
           mkdir -p docs/api
           if [ -d spotx/build/dokka/html ]; then rsync -a spotx/build/dokka/html/ docs/api/; fi
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+      - name: Build with Jekyll
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./docs
+          destination: ./_site
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs
+          path: _site
   deploy:
     needs: build
     runs-on: ubuntu-latest
