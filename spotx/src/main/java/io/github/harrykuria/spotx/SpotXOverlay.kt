@@ -65,7 +65,7 @@ fun SpotXOverlay(
 		Canvas(modifier = Modifier.fillMaxSize()) {
 			drawIntoCanvas { canvas ->
 				val paint = Paint()
-				canvas.saveLayer(size.toRect(), paint)
+				canvas.saveLayer(Rect(Offset.Zero, size), paint)
 
 				// Dim layer
 				drawRect(color = current.overlayColor.ifTransparent(defaultOverlayColor))
