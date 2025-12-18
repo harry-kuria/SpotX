@@ -5,12 +5,18 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -19,13 +25,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathOperation
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -40,6 +47,7 @@ fun SpotXOverlay(
 	defaultRingColor: Color = MaterialTheme.colorScheme.primary,
 	defaultRingWidth: Dp = 3.dp,
 	onDismissRequest: () -> Unit = { controller.stop() },
+	onFinish: () -> Unit = { controller.stop() },
 	footerContent: (@Composable () -> Unit)? = null,
 ) {
 	if (!controller.isRunning) return
@@ -63,69 +71,99 @@ fun SpotXOverlay(
 		val containerHeightPx = with(density) { maxHeight.toPx() }
 
 		Canvas(modifier = Modifier.fillMaxSize()) {
-			drawIntoCanvas { canvas ->
-				val paint = Paint()
-				canvas.saveLayer(Rect(Offset.Zero, size), paint)
-
-				// Dim layer
-				drawRect(color = current.overlayColor.ifTransparent(defaultOverlayColor))
-
-				// Cutout for the target
+			val overlayPath = Path().apply {
+				addRect(Rect(Offset.Zero, size))
+			}
+			val targetPath = Path().apply {
 				when (current.shape) {
 					SpotXShape.Circle -> {
-						drawCircle(
-							color = Color.Transparent,
-							radius = animatedRadius,
-							center = anchorCenter,
-							blendMode = BlendMode.Clear
+						val circleRect = Rect(
+							left = anchorCenter.x - animatedRadius,
+							top = anchorCenter.y - animatedRadius,
+							right = anchorCenter.x + animatedRadius,
+							bottom = anchorCenter.y + animatedRadius
 						)
-						// Ring
-						drawCircle(
-							color = current.ringColor.ifTransparent(defaultRingColor),
-							radius = animatedRadius + with(density) { (current.ringWidthDp.dp / 2f).toPx() },
-							style = Stroke(width = with(density) { current.ringWidthDp.dp.toPx() })
-						)
+						addOval(circleRect)
 					}
 					SpotXShape.RoundedRect -> {
-						val cr = with(density) { current.cornerRadiusDp.dp.toPx() }
-						// Clear rounded rect
-						drawRoundRect(
-							color = Color.Transparent,
-							topLeft = anchorBounds.topLeft,
-							size = anchorBounds.size,
-							cornerRadius = androidx.compose.ui.geometry.CornerRadius(cr, cr),
-							blendMode = BlendMode.Clear
+						val corner = CornerRadius(
+							x = with(density) { current.cornerRadiusDp.dp.toPx() },
+							y = with(density) { current.cornerRadiusDp.dp.toPx() }
 						)
-						// Ring
-						drawRoundRect(
-							color = current.ringColor.ifTransparent(defaultRingColor),
-							topLeft = anchorBounds.topLeft,
-							size = anchorBounds.size,
-							cornerRadius = androidx.compose.ui.geometry.CornerRadius(cr, cr),
-							style = Stroke(width = with(density) { current.ringWidthDp.dp.toPx() })
-						)
+						addRoundRect(androidx.compose.ui.geometry.RoundRect(anchorBounds, corner))
 					}
 				}
+			}
 
-				canvas.restore()
+			val spotlightPath = Path.combine(PathOperation.Difference, overlayPath, targetPath)
+			val overlayColor = current.overlayColor.ifTransparent(defaultOverlayColor)
+			drawPath(
+				path = spotlightPath,
+				color = overlayColor
+			)
+
+			val ringColor = current.ringColor.ifTransparent(defaultRingColor)
+			val ringWidthPx = with(density) { current.ringWidthDp.dp.toPx() }
+			val highlightBorderColor = Color.White.copy(alpha = 0.3f)
+			val highlightStrokePx = with(density) { 1.5.dp.toPx() }
+
+			when (current.shape) {
+				SpotXShape.Circle -> {
+					drawCircle(
+						color = ringColor,
+						center = anchorCenter,
+						radius = animatedRadius + ringWidthPx / 2f,
+						style = Stroke(width = ringWidthPx, cap = StrokeCap.Round)
+					)
+					drawCircle(
+						color = highlightBorderColor,
+						center = anchorCenter,
+						radius = animatedRadius + ringWidthPx,
+						style = Stroke(width = highlightStrokePx, cap = StrokeCap.Round)
+					)
+				}
+				SpotXShape.RoundedRect -> {
+					val corner = CornerRadius(
+						x = with(density) { current.cornerRadiusDp.dp.toPx() },
+						y = with(density) { current.cornerRadiusDp.dp.toPx() }
+					)
+					drawRoundRect(
+						color = ringColor,
+						topLeft = anchorBounds.topLeft,
+						size = anchorBounds.size,
+						cornerRadius = corner,
+						style = Stroke(width = ringWidthPx, cap = StrokeCap.Round)
+					)
+					drawRoundRect(
+						color = highlightBorderColor,
+						topLeft = anchorBounds.topLeft,
+						size = anchorBounds.size,
+						cornerRadius = corner,
+						style = Stroke(width = highlightStrokePx, cap = StrokeCap.Round)
+					)
+				}
 			}
 		}
 
-		// Info card
-		val topOrBottom = if (anchorCenter.y < containerHeightPx / 2f) Alignment.BottomCenter else Alignment.TopCenter
-		Column(
+		// Info card positioned near the bottom or top edge instead of filling the screen
+		val popoverAlignment = if (anchorCenter.y < containerHeightPx / 2f) Alignment.BottomCenter else Alignment.TopCenter
+		Box(
 			modifier = Modifier
 				.fillMaxSize()
-				.padding(contentPadding),
-			horizontalAlignment = Alignment.CenterHorizontally,
-			verticalArrangement = when (topOrBottom) {
-				Alignment.TopCenter -> androidx.compose.foundation.layout.Arrangement.Top
-				Alignment.BottomCenter -> androidx.compose.foundation.layout.Arrangement.Bottom
-				else -> androidx.compose.foundation.layout.Arrangement.Center
-			}
+				.padding(contentPadding)
 		) {
-			Surface(tonalElevation = 6.dp, shape = MaterialTheme.shapes.medium) {
-				Column(modifier = Modifier.padding(16.dp)) {
+			Surface(
+				modifier = Modifier
+					.align(popoverAlignment)
+					.widthIn(max = 320.dp),
+				tonalElevation = 6.dp,
+				shape = MaterialTheme.shapes.medium
+			) {
+				Column(
+					modifier = Modifier
+						.padding(16.dp)
+						.widthIn(max = 320.dp)
+				) {
 					Text(
 						text = current.title,
 						style = MaterialTheme.typography.titleMedium,
@@ -139,14 +177,29 @@ fun SpotXOverlay(
 						textAlign = TextAlign.Start
 					)
 					Spacer(Modifier.size(12.dp))
-					Button(onClick = { controller.next() }) {
-						Text("Next")
+					val isLastStep = controller.currentIndex == controller.targets.lastIndex
+					Row(
+						modifier = Modifier.fillMaxWidth(),
+						horizontalArrangement = Arrangement.End
+					) {
+						Button(
+							onClick = {
+								if (isLastStep) onFinish() else controller.next()
+							}
+						) {
+							Text(if (isLastStep) "Finish" else "Next")
+						}
 					}
 				}
 			}
 			if (footerContent != null) {
-				Spacer(Modifier.size(16.dp))
-				footerContent()
+				Box(
+					modifier = Modifier
+						.align(Alignment.BottomCenter)
+						.padding(top = 12.dp)
+				) {
+					footerContent()
+				}
 			}
 		}
 	}
