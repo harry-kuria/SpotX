@@ -104,43 +104,30 @@ fun SpotXOverlay(
 
 			val ringColor = current.ringColor.ifTransparent(defaultRingColor)
 			val ringWidthPx = with(density) { current.ringWidthDp.dp.toPx() }
-			val highlightBorderColor = Color.White.copy(alpha = 0.3f)
-			val highlightStrokePx = with(density) { 1.5.dp.toPx() }
 
-			when (current.shape) {
-				SpotXShape.Circle -> {
-					drawCircle(
-						color = ringColor,
-						center = anchorCenter,
-						radius = animatedRadius + ringWidthPx / 2f,
-						style = Stroke(width = ringWidthPx, cap = StrokeCap.Round)
-					)
-					drawCircle(
-						color = highlightBorderColor,
-						center = anchorCenter,
-						radius = animatedRadius + ringWidthPx,
-						style = Stroke(width = highlightStrokePx, cap = StrokeCap.Round)
-					)
-				}
-				SpotXShape.RoundedRect -> {
-					val corner = CornerRadius(
-						x = with(density) { current.cornerRadiusDp.dp.toPx() },
-						y = with(density) { current.cornerRadiusDp.dp.toPx() }
-					)
-					drawRoundRect(
-						color = ringColor,
-						topLeft = anchorBounds.topLeft,
-						size = anchorBounds.size,
-						cornerRadius = corner,
-						style = Stroke(width = ringWidthPx, cap = StrokeCap.Round)
-					)
-					drawRoundRect(
-						color = highlightBorderColor,
-						topLeft = anchorBounds.topLeft,
-						size = anchorBounds.size,
-						cornerRadius = corner,
-						style = Stroke(width = highlightStrokePx, cap = StrokeCap.Round)
-					)
+			if (ringWidthPx > 0f) {
+				when (current.shape) {
+					SpotXShape.Circle -> {
+						drawCircle(
+							color = ringColor,
+							center = anchorCenter,
+							radius = animatedRadius + ringWidthPx / 2f,
+							style = Stroke(width = ringWidthPx, cap = StrokeCap.Round)
+						)
+					}
+					SpotXShape.RoundedRect -> {
+						val corner = CornerRadius(
+							x = with(density) { current.cornerRadiusDp.dp.toPx() },
+							y = with(density) { current.cornerRadiusDp.dp.toPx() }
+						)
+						drawRoundRect(
+							color = ringColor,
+							topLeft = anchorBounds.topLeft,
+							size = anchorBounds.size,
+							cornerRadius = corner,
+							style = Stroke(width = ringWidthPx, cap = StrokeCap.Round)
+						)
+					}
 				}
 			}
 		}
@@ -156,7 +143,8 @@ fun SpotXOverlay(
 				modifier = Modifier
 					.align(popoverAlignment)
 					.widthIn(max = 320.dp),
-				tonalElevation = 6.dp,
+				tonalElevation = 0.dp, // Flat background to match React Card
+				shadowElevation = 8.dp, // Standard shadow instead of tonal tint
 				shape = MaterialTheme.shapes.medium
 			) {
 				Column(
