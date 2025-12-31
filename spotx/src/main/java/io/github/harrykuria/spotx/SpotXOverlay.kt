@@ -4,7 +4,6 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -44,10 +43,9 @@ fun SpotXOverlay(
 	controller: SpotXController,
 	contentPadding: PaddingValues = PaddingValues(24.dp),
 	defaultOverlayColor: Color = Color(0xCC000000),
-	defaultRingColor: Color = MaterialTheme.colorScheme.primary,
-	defaultRingWidth: Dp = 3.dp,
+	defaultRingColor: Color = Color.Transparent,
+	defaultRingWidth: Dp = 0.dp,
 	onDismissRequest: () -> Unit = { controller.stop() },
-	onFinish: () -> Unit = { controller.stop() },
 	footerContent: (@Composable () -> Unit)? = null,
 ) {
 	if (!controller.isRunning) return
@@ -138,6 +136,7 @@ fun SpotXOverlay(
 			modifier = Modifier
 				.fillMaxSize()
 				.padding(contentPadding)
+				.padding(bottom = 64.dp) // Added bottom padding to avoid navigation bars
 		) {
 			Surface(
 				modifier = Modifier
@@ -164,33 +163,31 @@ fun SpotXOverlay(
 						color = MaterialTheme.colorScheme.onSurface,
 						textAlign = TextAlign.Start
 					)
-					Spacer(Modifier.size(12.dp))
-					val isLastStep = controller.currentIndex == controller.targets.lastIndex
-					Row(
-						modifier = Modifier.fillMaxWidth(),
-						horizontalArrangement = Arrangement.End
-					) {
-						Button(
-							onClick = {
-								if (isLastStep) onFinish() else controller.next()
-							}
+					
+					Spacer(Modifier.size(16.dp))
+					
+					if (footerContent != null) {
+						footerContent()
+					} else {
+						// Default footer if no custom footer provided
+						val isLastStep = controller.currentIndex == controller.targets.lastIndex
+						Row(
+							modifier = Modifier.fillMaxWidth(),
+							horizontalArrangement = Arrangement.End
 						) {
-							Text(if (isLastStep) "Finish" else "Next")
+							Button(
+								onClick = {
+									if (isLastStep) onDismissRequest() else controller.next()
+								}
+							) {
+								Text(if (isLastStep) "Finish" else "Next")
+							}
 						}
 					}
-				}
-			}
-			if (footerContent != null) {
-				Box(
-					modifier = Modifier
-						.align(Alignment.BottomCenter)
-						.padding(top = 12.dp)
-				) {
-					footerContent()
 				}
 			}
 		}
 	}
 }
 
-private fun Color.ifTransparent(fallback: Color): Color = if (this.alpha == 0f) fallback else this 
+private fun Color.ifTransparent(fallback: Color): Color = if (this.alpha == 0f) fallback else this

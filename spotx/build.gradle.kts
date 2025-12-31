@@ -5,7 +5,7 @@ plugins {
 	id("org.jetbrains.kotlin.android")
 	id("org.jetbrains.dokka")
 	id("com.vanniktech.maven.publish")
-	id("signing")
+	// id("signing")
 }
 
 android {
@@ -56,7 +56,7 @@ afterEvaluate {
 	// Configure Central Portal publishing via Vanniktech plugin
 	mavenPublishing {
 		publishToMavenCentral()
-		signAllPublications()
+		// signAllPublications()
 		// Keep explicit POM metadata
 		pom {
 			name.set("SpotX")
@@ -83,6 +83,6 @@ afterEvaluate {
 	}
 } 
 
-signing {
-	useGpgCmd()
-}
+// signing {
+// 	useGpgCmd()
+// }

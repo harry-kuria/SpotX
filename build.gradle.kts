@@ -8,7 +8,7 @@ plugins {
 
 allprojects {
     group = "io.github.harry-kuria"
-    version = "0.1.0"
+    version = "1.1.1"
 }
 
 // Publishing is configured in module build files via Vanniktech Maven Publish
