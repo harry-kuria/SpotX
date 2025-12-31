@@ -15,7 +15,7 @@ SpotX is a modern onboarding tours SDK for Jetpack Compose. Spotlight any compos
 ## Installation
 
 ```kotlin
-implementation("io.github.harry-kuria:spotx:1.0.6")
+implementation("io.github.harry-kuria:spotx:1.1.1")
 ```
 
 ## Quick usage

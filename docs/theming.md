@@ -9,7 +9,7 @@ SpotX embraces Material 3 and can be styled to match your brand or Android Devel
 
 ## Quick knobs
 
-- Ring: `ringColor`, `ringWidthDp`
+- Ring: `ringColor`, `ringWidthDp` (Defaults to `Transparent` and `0dp` for a borderless look)
 - Overlay: `overlayColor`, `defaultOverlayColor` on `SpotXOverlay`
 - Shape: `SpotXShape.Circle`, `SpotXShape.RoundedRect` with `cornerRadiusDp`
 - Padding: `radiusPaddingDp`

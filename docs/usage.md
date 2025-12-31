@@ -8,7 +8,7 @@ title: Usage
 Add dependency:
 
 ```kotlin
-implementation("io.github.harry-kuria:spotx:1.0.6")
+implementation("io.github.harry-kuria:spotx:1.1.1")
 ```
 
 Basic example:
